@@ -170,7 +170,7 @@ export default function Home() {
                   <span></span>
                 </div>
               </header>
-              <nav className="l-side-nav">
+              <nav className="l-side-nav" style={{display: 'none'}}>
                 <ul className="side-nav">
                   <li className="is-active"><span><a href="/">Home</a></span></li>
                   <li><span>How</span></li>
