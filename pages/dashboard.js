@@ -93,8 +93,8 @@ export default function Home() {
             }
   
     button.addEventListener('pointerup', function(event) {
-              if (typeof bluetoothDevice !== 'undefined' && bluetoothDevice.connected) {
-                bluetoothDevice.disconnect();
+              if (connectStatus === "Disconnect") {
+                bluetoothDevice.gatt.disconnect();
                 setConnectStatus("Connect")
               } else {
                               navigator.bluetooth.requestDevice({
