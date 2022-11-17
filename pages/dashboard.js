@@ -103,6 +103,7 @@ export default function Home() {
               })
               .then(device => {
                 bluetoothDevice = device
+                console.log(bluetoothDevice)
                 return device.gatt.connect();
               })
               .then(server => {
