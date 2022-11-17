@@ -93,7 +93,7 @@ export default function Home() {
             }
   
     button.addEventListener('pointerup', function(event) {
-              if (bluetoothDevice.connected) {
+              if (typeof bluetoothDevice !== 'undefined' && bluetoothDevice.connected) {
                 bluetoothDevice.disconnect();
                 setConnectStatus("Connect")
               } else {
