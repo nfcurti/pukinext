@@ -9,6 +9,7 @@ export default function Home() {
   const [totalFootsteps, setTotalFootsteps] = useState(0);
   const [average, setAverage] = useState(0);
   const [sessionUptime, setSessionUptime] = useState(0);
+  const [connectStatus, setConnectStatus] = useState("Connect");
 
   const [buffer, setBuffer] = useState([]);
 
@@ -185,7 +186,7 @@ export default function Home() {
                   <div className="intro">
                     <div className="intro--banner" style={{position: 'initial'}}>
 
-                      <button id="connect" className="cta">Connect
+                      <button id="connect" className="cta">{connectStatus}
                         <span className="btn-background"></span>
                       </button>
                       <div className="footstepsData">
@@ -266,6 +267,7 @@ export default function Home() {
               characteristic.addEventListener('characteristicvaluechanged',
                                               handleCharacteristicValueChanged);
               console.log('Notifications have been started.');
+              setConnectStatus("Disconnect")
             })
             .catch(error => { console.log(error); });
                   });
