@@ -43,7 +43,75 @@ export default function Home() {
               }else{
                 //Error, los resultados no son multiplos de 4. paso algo
               }
-        }       
+        }      
+
+
+  const handleCharacteristicValueChanged = (event)  => {
+              var value = JSON.stringify(event.target.value);
+              console.log(buffer);
+
+              var time = new Date();
+              const  timestamp = ''+time.getUTCHours()+time.getUTCMinutes()+time.getUTCSeconds()
+
+
+
+
+              if (!buffer.includes(timestamp)) {
+                console.log(buffer)
+                 var url = "https://script.google.com/macros/s/AKfycbxCpCi08Og8DPEf3QDuRQWX78xeqiM4JCsuEwycIDdkx-5t1vXb966Qy6aXcBArB6_m/exec?uuid="+serviceUUID+"&date="+time+"&action=step"
+                  fetch(url, {mode:"no-cors"}).then(function(response) {
+                  }).then(function(data) {
+                  }).catch(function(e) {
+                    console.log(e);
+                  });
+                  var _tempBuffer = buffer
+                  _tempBuffer.push(timestamp);
+                  setBuffer(_tempBuffer);
+              }
+          }
+
+  const button = document.getElementById('connect')
+
+  var serviceUUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b'
+  
+  function sleep(ms) {
+              return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+  function handleNotifications(event) {
+            let value = event.target.value;
+            let a = [];
+
+            for (let i = 0; i < value.byteLength; i++) {
+              a.push('0x' + ('00' + value.getUint8(i).toString(16)).slice(-2));
+            }
+            log('> ' + a.join(' '));
+          }
+
+  button.addEventListener('pointerup', function(event) {
+               navigator.bluetooth.requestDevice({
+                acceptAllDevices: true,
+                  optionalServices: [ serviceUUID ]
+            })
+            .then(device => {
+              bluetoothDevice = device;
+              return device.gatt.connect();
+            })
+            .then(server => {
+              return server.getPrimaryService(serviceUUID);
+            })
+            .then(service => {
+              return service.getCharacteristic('beb5483e-36e1-4688-b7f5-ea07361b26a8');
+            })
+            .then(characteristic => characteristic.startNotifications())
+            .then(characteristic => {
+              characteristic.addEventListener('characteristicvaluechanged',
+                                              handleCharacteristicValueChanged);
+              console.log('Notifications have been started.');
+              setConnectStatus("Disconnect")
+            })
+            .catch(error => { console.log(error); });
+        }); 
 
   const loadGraphic = () => {
     const ctx = document.getElementById('myChart').getContext('2d');
@@ -208,72 +276,7 @@ export default function Home() {
       <Script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></Script>
       <Script src="/js/functions-min.js"></Script>
       <Script src="https://cdn.jsdelivr.net/npm/chart.js"></Script>
-      
-      <Script id="ble_exec">{`
-            const handleCharacteristicValueChanged = (event)  => {
-              var value = JSON.stringify(event.target.value);
-              console.log(buffer);
 
-              var time = new Date();
-              const  timestamp = ''+time.getUTCHours()+time.getUTCMinutes()+time.getUTCSeconds()
-
-
-
-
-              if (!buffer.includes(timestamp)) {
-                console.log(buffer)
-                 var url = "https://script.google.com/macros/s/AKfycbxCpCi08Og8DPEf3QDuRQWX78xeqiM4JCsuEwycIDdkx-5t1vXb966Qy6aXcBArB6_m/exec?uuid="+serviceUUID+"&date="+time+"&action=step"
-                  fetch(url, {mode:"no-cors"}).then(function(response) {
-                  }).then(function(data) {
-                  }).catch(function(e) {
-                    console.log(e);
-                  });
-                  var _tempBuffer = buffer
-                  _tempBuffer.push(timestamp);
-                  setBuffer(_tempBuffer);
-              }
-            }
-
-            const button = document.getElementById('connect')
-            var serviceUUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b'
-            function sleep(ms) {
-              return new Promise(resolve => setTimeout(resolve, ms));
-            }
-
-            function handleNotifications(event) {
-            let value = event.target.value;
-            let a = [];
-
-            for (let i = 0; i < value.byteLength; i++) {
-              a.push('0x' + ('00' + value.getUint8(i).toString(16)).slice(-2));
-            }
-            log('> ' + a.join(' '));
-          }
-            button.addEventListener('pointerup', function(event) {
-               navigator.bluetooth.requestDevice({
-                acceptAllDevices: true,
-                  optionalServices: [ serviceUUID ]
-            })
-            .then(device => {
-              bluetoothDevice = device;
-              return device.gatt.connect();
-            })
-            .then(server => {
-              return server.getPrimaryService(serviceUUID);
-            })
-            .then(service => {
-              return service.getCharacteristic('beb5483e-36e1-4688-b7f5-ea07361b26a8');
-            })
-            .then(characteristic => characteristic.startNotifications())
-            .then(characteristic => {
-              characteristic.addEventListener('characteristicvaluechanged',
-                                              handleCharacteristicValueChanged);
-              console.log('Notifications have been started.');
-              setConnectStatus("Disconnect")
-            })
-            .catch(error => { console.log(error); });
-                  });
-      `}</Script>
     </div>
   )
 }
