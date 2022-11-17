@@ -73,7 +73,7 @@ export default function Home() {
   const button = document.getElementById('connect')
 
   var serviceUUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b'
-  
+
   function sleep(ms) {
               return new Promise(resolve => setTimeout(resolve, ms));
             }
@@ -108,8 +108,7 @@ export default function Home() {
               characteristic.addEventListener('characteristicvaluechanged',
                                               handleCharacteristicValueChanged);
               console.log('Notifications have been started.');
-              setConnectStatus("Disconnect")
-            })
+              setAverage(2)            })
             .catch(error => { console.log(error); });
         }); 
 
