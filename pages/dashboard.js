@@ -93,7 +93,10 @@ export default function Home() {
             }
   
     button.addEventListener('pointerup', function(event) {
-                 navigator.bluetooth.requestDevice({
+              if (bluetoothDevice.gatt.connected) {
+                bluetoothDevice.gatt.disconnect();
+              } else {
+                              navigator.bluetooth.requestDevice({
                   acceptAllDevices: true,
                     optionalServices: [ serviceUUID ]
               })
@@ -114,6 +117,8 @@ export default function Home() {
                 setConnectStatus("Disconnect")
               })
               .catch(error => { console.log(error); });
+              }
+
           }); }
 
   const loadGraphic = () => {
