@@ -15,6 +15,7 @@ export default function Home() {
 
   useEffect(() => {
     loadGraphic();
+    loadBLEInterface();
     return;
   }, []);
 
@@ -70,48 +71,51 @@ export default function Home() {
               }
           }
 
-  const button = document.getElementById('connect')
 
-  var serviceUUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b'
+  const loadBLEInterface = () =>{
   
-  function sleep(ms) {
-              return new Promise(resolve => setTimeout(resolve, ms));
+    const button = document.getElementById('connect')
+  
+    var serviceUUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b'
+  
+    function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+              }
+  
+    function handleNotifications(event) {
+              let value = event.target.value;
+              let a = [];
+  
+              for (let i = 0; i < value.byteLength; i++) {
+                a.push('0x' + ('00' + value.getUint8(i).toString(16)).slice(-2));
+              }
+              log('> ' + a.join(' '));
             }
-
-  function handleNotifications(event) {
-            let value = event.target.value;
-            let a = [];
-
-            for (let i = 0; i < value.byteLength; i++) {
-              a.push('0x' + ('00' + value.getUint8(i).toString(16)).slice(-2));
-            }
-            log('> ' + a.join(' '));
-          }
-
-  button.addEventListener('pointerup', function(event) {
-               navigator.bluetooth.requestDevice({
-                acceptAllDevices: true,
-                  optionalServices: [ serviceUUID ]
-            })
-            .then(device => {
-              bluetoothDevice = device;
-              return device.gatt.connect();
-            })
-            .then(server => {
-              return server.getPrimaryService(serviceUUID);
-            })
-            .then(service => {
-              return service.getCharacteristic('beb5483e-36e1-4688-b7f5-ea07361b26a8');
-            })
-            .then(characteristic => characteristic.startNotifications())
-            .then(characteristic => {
-              characteristic.addEventListener('characteristicvaluechanged',
-                                              handleCharacteristicValueChanged);
-              console.log('Notifications have been started.');
-              setConnectStatus("Disconnect")
-            })
-            .catch(error => { console.log(error); });
-        }); 
+  
+    button.addEventListener('pointerup', function(event) {
+                 navigator.bluetooth.requestDevice({
+                  acceptAllDevices: true,
+                    optionalServices: [ serviceUUID ]
+              })
+              .then(device => {
+                bluetoothDevice = device;
+                return device.gatt.connect();
+              })
+              .then(server => {
+                return server.getPrimaryService(serviceUUID);
+              })
+              .then(service => {
+                return service.getCharacteristic('beb5483e-36e1-4688-b7f5-ea07361b26a8');
+              })
+              .then(characteristic => characteristic.startNotifications())
+              .then(characteristic => {
+                characteristic.addEventListener('characteristicvaluechanged',
+                                                handleCharacteristicValueChanged);
+                console.log('Notifications have been started.');
+                setConnectStatus("Disconnect")
+              })
+              .catch(error => { console.log(error); });
+          }); }
 
   const loadGraphic = () => {
     const ctx = document.getElementById('myChart').getContext('2d');
