@@ -12,6 +12,7 @@ export default function Home() {
   const [connectStatus, setConnectStatus] = useState("Connect");
 
   const [buffer, setBuffer] = useState([]);
+  var bluetoothDevice
 
   useEffect(() => {
     loadGraphic();
@@ -77,7 +78,6 @@ export default function Home() {
     const button = document.getElementById('connect')
   
     var serviceUUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b'
-  
     function sleep(ms) {
                 return new Promise(resolve => setTimeout(resolve, ms));
               }
@@ -93,14 +93,16 @@ export default function Home() {
             }
   
     button.addEventListener('pointerup', function(event) {
-              if (navigator.BluetoothRemoteGATTServer.connected) {
-                navigator.BluetoothRemoteGATTServer.disconnect();
+              if (bluetoothDevice.connected) {
+                bluetoothDevice.disconnect();
+                setConnectStatus("Connect")
               } else {
                               navigator.bluetooth.requestDevice({
                   acceptAllDevices: true,
                     optionalServices: [ serviceUUID ]
               })
               .then(device => {
+                bluetoothDevice = device
                 return device.gatt.connect();
               })
               .then(server => {
