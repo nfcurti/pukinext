@@ -2,6 +2,7 @@ import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import Script from 'next/script'
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link'
 
 export default function Home() {
   const [sessionFootsteps, setSessionFootsteps] = useState(0);
@@ -161,7 +162,7 @@ export default function Home() {
           <div id="viewport" className="l-viewport" style={{overflow: 'scroll'}}>
             <div className="l-wrapper">
               <header className="header">
-                <a className="header--logo" href="#0">
+                <a className="header--logo" href="/">
                   <img src="/img/logo.svg" alt="logo" width="50"/>
                   <h2 style={{marginLeft: '3em'}}>Your Dashboard</h2>
                 </a>
@@ -172,10 +173,11 @@ export default function Home() {
               </header>
               <nav className="l-side-nav" style={{display: 'none'}}>
                 <ul className="side-nav">
-                  <li className="is-active"><span><a href="/">Home</a></span></li>
+                  <li href="/"><span><a >Home</a></span></li>
                   <li><span>How</span></li>
                   <li><span>Team</span></li>
                   <li><span>Contact</span></li>
+                  <li className="is-active"><span><a href="/dashboard">Dashboard</a></span></li>
                 </ul>
               </nav>
               <ul className="l-main-content main-content">
@@ -216,11 +218,11 @@ export default function Home() {
           </div>
         </div>
           <ul className="outer-nav">
-            <li className="is-active"><a href="/">Home</a></li>
+            <li ><a href="/">Home</a></li>
             <li>How</li>
             <li>Team</li>
             <li>Contact</li>
-            <li><a href="/dashboard">Dashboard</a></li>
+            <li className="is-active"><a href="/dashboard">Dashboard</a></li>
           </ul>
       </div>
 
