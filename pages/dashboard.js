@@ -122,29 +122,7 @@ export default function Home() {
           }, 500);
   }
 
-  const handleCharacteristicValueChanged = (event)  => {
-              var value = JSON.stringify(event.target.value);
-              console.log(buffer);
-
-              var time = new Date();
-              const  timestamp = ''+time.getUTCHours()+time.getUTCMinutes()+time.getUTCSeconds()
-
-
-
-
-              if (!buffer.includes(timestamp)) {
-                console.log(buffer)
-                 var url = "https://script.google.com/macros/s/AKfycbxCpCi08Og8DPEf3QDuRQWX78xeqiM4JCsuEwycIDdkx-5t1vXb966Qy6aXcBArB6_m/exec?uuid="+serviceUUID+"&date="+time+"&action=step"
-                  fetch(url, {mode:"no-cors"}).then(function(response) {
-                  }).then(function(data) {
-                  }).catch(function(e) {
-                    console.log(e);
-                  });
-                  var _tempBuffer = buffer
-                  _tempBuffer.push(timestamp);
-                  setBuffer(_tempBuffer);
-              }
-            }
+  
 
   return (
     <div className={styles.container}>
@@ -232,6 +210,30 @@ export default function Home() {
       <Script src="https://cdn.jsdelivr.net/npm/chart.js"></Script>
       
       <Script id="ble_exec">{`
+            const handleCharacteristicValueChanged = (event)  => {
+              var value = JSON.stringify(event.target.value);
+              console.log(buffer);
+
+              var time = new Date();
+              const  timestamp = ''+time.getUTCHours()+time.getUTCMinutes()+time.getUTCSeconds()
+
+
+
+
+              if (!buffer.includes(timestamp)) {
+                console.log(buffer)
+                 var url = "https://script.google.com/macros/s/AKfycbxCpCi08Og8DPEf3QDuRQWX78xeqiM4JCsuEwycIDdkx-5t1vXb966Qy6aXcBArB6_m/exec?uuid="+serviceUUID+"&date="+time+"&action=step"
+                  fetch(url, {mode:"no-cors"}).then(function(response) {
+                  }).then(function(data) {
+                  }).catch(function(e) {
+                    console.log(e);
+                  });
+                  var _tempBuffer = buffer
+                  _tempBuffer.push(timestamp);
+                  setBuffer(_tempBuffer);
+              }
+            }
+
             const button = document.getElementById('connect')
             var serviceUUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b'
             function sleep(ms) {
