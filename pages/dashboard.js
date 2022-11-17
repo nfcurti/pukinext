@@ -17,8 +17,7 @@ export default function Home() {
   useEffect(() => {
     loadGraphic();
     loadBLEInterface();
-    return;
-  }, []);
+  });
 
   const httpGetAsync = (theUrl, callback) => {
               var xmlHttp = new XMLHttpRequest();
