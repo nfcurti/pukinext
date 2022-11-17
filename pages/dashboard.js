@@ -93,8 +93,8 @@ export default function Home() {
             }
   
     button.addEventListener('pointerup', function(event) {
-      console.log(connectStatus == "Disconnect")
-              if (connectStatus == "Disconnect") {
+      console.log(connectStatus === "Disconnect")
+              if (connectStatus === "Disconnect") {
                 bluetoothDevice.gatt.disconnect();
                 setConnectStatus("Connect")
               } else {
