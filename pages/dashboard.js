@@ -98,7 +98,6 @@ export default function Home() {
                     optionalServices: [ serviceUUID ]
               })
               .then(device => {
-                bluetoothDevice = device;
                 return device.gatt.connect();
               })
               .then(server => {
