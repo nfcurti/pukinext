@@ -96,7 +96,6 @@ export default function Home() {
             }
   
     button.addEventListener('pointerup', function(event) {
-      console.log(bluetoothDevice)
               if (connectStatus === "Disconnect") {
                 bluetoothDevice.gatt.disconnect();
                 setConnectStatus("Connect")
@@ -107,7 +106,6 @@ export default function Home() {
               })
               .then(device => {
                 bluetoothDevice = device
-                console.log(bluetoothDevice)
                 return device.gatt.connect();
               })
               .then(server => {
@@ -121,6 +119,7 @@ export default function Home() {
                 characteristic.addEventListener('characteristicvaluechanged',
                                                 handleCharacteristicValueChanged);
                 console.log('Notifications have been started.');
+                console.log(bluetoothDevice)
                 setConnectStatus("Disconnect")
               })
               .catch(error => { console.log(error); });
