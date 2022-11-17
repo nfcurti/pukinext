@@ -93,8 +93,8 @@ export default function Home() {
             }
   
     button.addEventListener('pointerup', function(event) {
-              if (bluetoothDevice.gatt.connected) {
-                bluetoothDevice.gatt.disconnect();
+              if (navigator.BluetoothRemoteGATTServer.connected) {
+                navigator.BluetoothRemoteGATTServer.disconnect();
               } else {
                               navigator.bluetooth.requestDevice({
                   acceptAllDevices: true,
