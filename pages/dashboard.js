@@ -12,6 +12,7 @@ export default function Home() {
   const [connectStatus, setConnectStatus] = useState("Connect");
   const [filterStatus, setFilterStatus] = useState(false);
   const [filteredUuids, setFilteredUuids] = useState([]);
+  const [filterInput, setFilterInput] = useState('');
 
   const [buffer, setBuffer] = useState([]);
   var bluetoothDevice
@@ -366,20 +367,29 @@ export default function Home() {
                         <span className="btn-background"></span>
                       </button>
                       {
-                        filterStatus ? <div>
-                        {
-                          filteredUuids.map(item => <div onClick={() => {
-                            loadGraphic(item);
-                          }}>
-                              <a href='#'>{item}</a>
-                          </div>)
-                        }
+                        // filterStatus ? <div>
+                        // {
+                        //   filteredUuids.map(item => <div key={filteredUuids.indexOf(item)} onClick={() => {
+                        //     loadGraphic(item);
+                        //   }}>
+                        //       <a href='#'>{item}</a>
+                        //   </div>)
+                        // }
       
-                        <div onClick={() => {
-                          loadGraphic();
-                        }}>
-                          <a href='#'>Remove all filters</a>
-                        </div>
+                        // <div onClick={() => {
+                        //   loadGraphic();
+                        // }}>
+                        //   <a href='#'>Remove all filters</a>
+                        // </div>
+                      filterStatus ? <div>
+                        <input type='text' value={filterInput} onChange={(ev) => setFilterInput(ev.target.value)}/><button onClick={() => {
+                          if(filterInput == '') {
+                            loadGraphic();
+                          }else{
+                            loadGraphic(filterInput);
+                          }
+                          
+                        }}>Search</button>
                       </div> : <div/>
                       }
                       <div className="footstepsData">
