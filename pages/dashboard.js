@@ -178,6 +178,20 @@ export default function Home() {
                 }
                 _graphicDataArray = _graphicDataArray.reverse()
 
+                var _lastDays = getLastThirtyDaysAsString();
+
+                var _posToRemovePreZeros = -1;
+                var _counterPTRRZ = 0;
+                while(_posToRemovePreZeros == -1) {
+                  if(_graphicDataArray[_counterPTRRZ] == 0){
+                    _counterPTRRZ = _counterPTRRZ + 1;
+                  }else{
+                    _posToRemovePreZeros = _counterPTRRZ;
+                  }
+                }
+                _graphicDataArray = _graphicDataArray.slice(_posToRemovePreZeros, _graphicDataArray.length);
+                _lastDays = _lastDays.slice(_posToRemovePreZeros, _lastDays.length);
+
                 function average(ctx) {
                   const values = ctx.chart.data.datasets[0].data;
                   return values.reduce((a, b) => a + b, 0) / values.length;
@@ -186,7 +200,7 @@ export default function Home() {
                     const myChart = new Chart(ctx, {
                     type: 'line',
                     data: {
-                        labels: getLastThirtyDaysAsString(),
+                        labels: _lastDays,
                         datasets: [{
                             label: '# of steps',
                             data: _graphicDataArray,
