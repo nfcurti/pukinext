@@ -10,11 +10,14 @@ export default function Home() {
   const [average, setAverage] = useState(0);
   const [sessionUptime, setSessionUptime] = useState(0);
   const [connectStatus, setConnectStatus] = useState("Connect");
+  const [filterStatus, setFilterStatus] = useState(false);
+  const [filteredUuids, setFilteredUuids] = useState([]);
 
   const [buffer, setBuffer] = useState([]);
   var bluetoothDevice
 
   useEffect(() => {
+    
     loadGraphic();
     return;
   }, []);
@@ -154,9 +157,10 @@ export default function Home() {
     return _newArray.reverse()
   }
 
-  const loadGraphic = () => {
+  const loadGraphic = (withFilter) => {
     const ctx = document.getElementById('myChart').getContext('2d');
-
+    
+    
           var url = "https://script.googleusercontent.com/macros/echo?user_content_key=RoTvzw3Jrao6Q5ozTMIClzKXal_nVgNXmB4kdqmZOEbWaSh5vLZ_cGCjk-51WUCeqL82qkNYb1OYcUjn-XsCKao5x-nZc5NIm5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnEDSMxuy4oxGke5DwX9rX_d17KxU0ERkB0tMVJS4KW41AajhB3o1aK8_k9BaIGcvdREHoH3TmIf2RgiyHkInq-HVoVs1IT-z7A&lib=MqcSznd5SPDxLVg4nodiELbfU9wjpaBD5"
           
 
@@ -164,18 +168,48 @@ export default function Home() {
               console.log(excelResult)
 
               getPukiDataFromExcel(excelResult, function(pukiData) {
-                console.log(pukiData)
-                setTotalFootsteps(pukiData.length)
+                // console.log(pukiData)
+                if(withFilter != null) {
+                  var _stepsFiltered = pukiData.filter(u => u.uuid == withFilter)
+
+                  setTotalFootsteps(_stepsFiltered.length)
+                }else{
+                  setTotalFootsteps(pukiData.length)
+                }
+                
 
                 var _graphicDataArray = [];
                 var _last30Days = getLastThirtyDays();
+
+                var uniqueIds = []
+
+                for(var y=0;y<pukiData.length;y++) {
+                  if(uniqueIds.indexOf(pukiData[y].uuid) == -1) {
+                    uniqueIds.push(pukiData[y].uuid.toString())
+                  }
+                }
+                setFilteredUuids(uniqueIds);
+
                 
                 for(var i=0;i<_last30Days.length;i++) {
-                  var _existDate = pukiData.filter(a => a.date.getDate() == _last30Days[i].getDate() &&
-                  a.date.getMonth() == _last30Days[i].getMonth() &&  a.date.getFullYear() == _last30Days[i].getFullYear()  );
+                  
+                  if(withFilter != null) {
+                    var _existDate = pukiData.filter(a => a.uuid == withFilter && a.date.getDate() == _last30Days[i].getDate() &&
+                    a.date.getMonth() == _last30Days[i].getMonth() &&  a.date.getFullYear() == _last30Days[i].getFullYear()  );
                   // console.log(_existDate)
-                  _graphicDataArray.push(_existDate.length)
+                    _graphicDataArray.push(_existDate.length)
+                  }else{
+                    var _existDate = pukiData.filter(a => a.date.getDate() == _last30Days[i].getDate() &&
+                    a.date.getMonth() == _last30Days[i].getMonth() &&  a.date.getFullYear() == _last30Days[i].getFullYear()  );
+                  // console.log(_existDate)
+                    _graphicDataArray.push(_existDate.length)
+                  }
+                  
+                  
                 }
+
+
+                console.log(uniqueIds)
                 _graphicDataArray = _graphicDataArray.reverse()
 
                 var _lastDays = getLastThirtyDaysAsString();
@@ -192,11 +226,34 @@ export default function Home() {
                 _graphicDataArray = _graphicDataArray.slice(_posToRemovePreZeros, _graphicDataArray.length);
                 _lastDays = _lastDays.slice(_posToRemovePreZeros, _lastDays.length);
 
+                
+                // if(withFilter != null) {
+                //   var _tempArray = []
+                //   var _tempDays = []
+                //   for(var k=0;k<_graphicDataArray.length;k++) {
+                //     console.log('Is '+_graphicDataArray[k].uuid+' equals to '+withFilter+'?')
+                //     console.log(_graphicDataArray[k])
+                //     if(_graphicDataArray[k].uuid == withFilter) {
+                //       _tempArray.push(_graphicDataArray[k]);
+                //       _tempDays.push(_lastDays[k]);
+                //     }
+                //   }
+                //   _graphicDataArray = _tempArray;
+                //   _lastDays = _tempDays
+                // }
+
                 function average(ctx) {
                   const values = ctx.chart.data.datasets[0].data;
                   return values.reduce((a, b) => a + b, 0) / values.length;
                 }
                 setTimeout(function () {
+                  
+                  let chartStatus = Chart.getChart("myChart"); // <canvas> id
+                  if (chartStatus != undefined) {
+                    chartStatus.destroy();
+                          //(or)
+                   // chartStatus.clear();
+                  }
                     const myChart = new Chart(ctx, {
                     type: 'line',
                     data: {
@@ -214,6 +271,7 @@ export default function Home() {
                         }]
                     },
                     options: {
+                      
                         scales: {
                           x: {
                                 beginAtZero: true,
@@ -232,6 +290,7 @@ export default function Home() {
                         }
                     },
                     plugins: {
+                      
                       annotation: {
                         annotations: {
                           type: 'line',
@@ -303,6 +362,26 @@ export default function Home() {
                       <button id="connect" className="cta">{connectStatus}
                         <span className="btn-background"></span>
                       </button>
+                      <button onClick={() => setFilterStatus(!filterStatus)} className="cta">Filter
+                        <span className="btn-background"></span>
+                      </button>
+                      {
+                        filterStatus ? <div>
+                        {
+                          filteredUuids.map(item => <div onClick={() => {
+                            loadGraphic(item);
+                          }}>
+                              <a href='#'>{item}</a>
+                          </div>)
+                        }
+      
+                        <div onClick={() => {
+                          loadGraphic();
+                        }}>
+                          <a href='#'>Remove all filters</a>
+                        </div>
+                      </div> : <div/>
+                      }
                       <div className="footstepsData">
                         <div>Footsteps (Session)
                           <p>{sessionFootsteps} 
