@@ -38,9 +38,11 @@ export default function Home() {
               if((_parts.length) %3 == 0) {
                 var _array = []
                 for(var i=0 ; i < _parts.length;i=i+3) {
+                  var _date = new Date(_parts[i+1])
+                  
                   _array.push({
                     uuid: _parts[i],
-                    date: _parts[i+1],
+                    date: _date,
                     action: _parts[i+2]
                   })
                 }
@@ -127,6 +129,31 @@ export default function Home() {
 
           }); }
 
+  const getLastThirtyDays = () => {
+    const _today = new Date();
+    var _newArray = [];
+    for(var i=0;i<31;i++) {
+      var _tempDate = new Date();
+      _tempDate.setDate(_tempDate.getDate() - i);
+      _newArray.push(_tempDate)
+    }
+    return _newArray;
+    
+  }
+
+  const getLastThirtyDaysAsString = () => {
+    var array = getLastThirtyDays();
+    var _newArray = [];
+    for(var i=0;i<array.length;i++) {
+      var _date = new Date(array[i])
+      var _day = _date.getDate();
+      var _month = _date.getMonth()+1
+      var _year = _date.getFullYear()
+      _newArray.push(_day+'/'+_month+'/'+_year)
+    }
+    return _newArray.reverse()
+  }
+
   const loadGraphic = () => {
     const ctx = document.getElementById('myChart').getContext('2d');
 
@@ -139,69 +166,82 @@ export default function Home() {
               getPukiDataFromExcel(excelResult, function(pukiData) {
                 console.log(pukiData)
                 setTotalFootsteps(pukiData.length)
+
+                var _graphicDataArray = [];
+                var _last30Days = getLastThirtyDays();
+                
+                for(var i=0;i<_last30Days.length;i++) {
+                  var _existDate = pukiData.filter(a => a.date.getDate() == _last30Days[i].getDate() &&
+                  a.date.getMonth() == _last30Days[i].getMonth() &&  a.date.getFullYear() == _last30Days[i].getFullYear()  );
+                  // console.log(_existDate)
+                  _graphicDataArray.push(_existDate.length)
+                }
+                _graphicDataArray = _graphicDataArray.reverse()
+
+                function average(ctx) {
+                  const values = ctx.chart.data.datasets[0].data;
+                  return values.reduce((a, b) => a + b, 0) / values.length;
+                }
+                setTimeout(function () {
+                    const myChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: getLastThirtyDaysAsString(),
+                        datasets: [{
+                            label: '# of steps',
+                            data: _graphicDataArray,
+                            backgroundColor: [
+                                'rgba(15,51,255,0.5)'
+                            ],
+                            borderColor: [
+                                'rgba(15,51,255,1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                          x: {
+                                beginAtZero: true,
+                                grid: {
+                                  color: 'rgba(255,255,255,0.1)'
+                                }
+      
+                            },
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                  color: 'rgba(255,255,255,0.1)'
+                                }
+      
+                            }
+                        }
+                    },
+                    plugins: {
+                      annotation: {
+                        annotations: {
+                          type: 'line',
+                          borderColor: 'white',
+                          borderDash: [6, 6],
+                          borderDashOffset: 0,
+                          borderWidth: 3,
+                          label: {
+                            enabled: true,
+                            content: (ctx) => 'Average: ' + average(ctx).toFixed(2),
+                            position: 'end'
+                          },
+                          scaleID: 'y',
+                          value: (ctx) => average(ctx)
+      
+                                }
+                      }
+                    }
+                });
+                }, 500);
               })
           });
           
-          function average(ctx) {
-            const values = ctx.chart.data.datasets[0].data;
-            return values.reduce((a, b) => a + b, 0) / values.length;
-          }
-          setTimeout(function () {
-              const myChart = new Chart(ctx, {
-              type: 'line',
-              data: {
-                  labels: ['1/10/2022', '2/10/2022', '3/10/2022', '4/10/2022', '5/10/2022', '6/10/2022'],
-                  datasets: [{
-                      label: '# of steps',
-                      data: [12, 19, 13, 15, 21, 13],
-                      backgroundColor: [
-                          'rgba(15,51,255,0.5)'
-                      ],
-                      borderColor: [
-                          'rgba(15,51,255,1)'
-                      ],
-                      borderWidth: 1
-                  }]
-              },
-              options: {
-                  scales: {
-                    x: {
-                          beginAtZero: true,
-                          grid: {
-                            color: 'rgba(255,255,255,0.1)'
-                          }
-
-                      },
-                      y: {
-                          beginAtZero: true,
-                          grid: {
-                            color: 'rgba(255,255,255,0.1)'
-                          }
-
-                      }
-                  }
-              },
-              plugins: {
-                annotation: {
-                  annotations: {
-                    type: 'line',
-                    borderColor: 'white',
-                    borderDash: [6, 6],
-                    borderDashOffset: 0,
-                    borderWidth: 3,
-                    label: {
-                      enabled: true,
-                      content: (ctx) => 'Average: ' + average(ctx).toFixed(2),
-                      position: 'end'
-                    },
-                    scaleID: 'y',
-                    value: (ctx) => average(ctx)
-
-                          }
-                }
-              }
-          });
-          }, 500);
+          
   }
 
   
