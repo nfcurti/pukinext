@@ -412,7 +412,8 @@
     font-weight:700;
     text-transform:uppercase;
     background-color:transparent;
-    border:none
+    border:none;
+    margin-left: 10px;    
 }
 .intro--banner button .btn-background{
     position:absolute;
@@ -1410,4 +1411,3 @@
     -webkit-transition-delay:.16s;
     transition-delay:.16s
 }
-
