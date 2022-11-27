@@ -16,7 +16,8 @@ export default function Home() {
 
   const [buffer, setBuffer] = useState([]);
   var bluetoothDevice
-
+  var serviceUUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b'
+  
   useEffect(() => {
     
     loadGraphic();
@@ -86,7 +87,6 @@ export default function Home() {
   
     const button = document.getElementById('connect')
   
-    var serviceUUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b'
     function sleep(ms) {
                 return new Promise(resolve => setTimeout(resolve, ms));
               }
