@@ -72,6 +72,7 @@ export default function Home() {
                 console.log(buffer)
                  var url = "https://script.google.com/macros/s/AKfycbxCpCi08Og8DPEf3QDuRQWX78xeqiM4JCsuEwycIDdkx-5t1vXb966Qy6aXcBArB6_m/exec?uuid="+serviceUUID+"&date="+time+"&action=step"
                   fetch(url, {mode:"no-cors"}).then(function(response) {
+                  setSessionFootsteps(sessionFootsteps+1)
                   }).then(function(data) {
                   }).catch(function(e) {
                     console.log(e);
@@ -79,7 +80,6 @@ export default function Home() {
                   var _tempBuffer = buffer
                   _tempBuffer.push(timestamp);
                   setBuffer(_tempBuffer);
-                  setSessionFootsteps(sessionFootsteps++)
               }
           }
 
