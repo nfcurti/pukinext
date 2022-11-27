@@ -17,7 +17,7 @@ export default function Home() {
   const [buffer, setBuffer] = useState([]);
   var bluetoothDevice
   var serviceUUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b'
-  
+
   useEffect(() => {
     
     loadGraphic();
@@ -79,6 +79,7 @@ export default function Home() {
                   var _tempBuffer = buffer
                   _tempBuffer.push(timestamp);
                   setBuffer(_tempBuffer);
+                  setSessionFootsteps(sessionFootsteps++)
               }
           }
 
